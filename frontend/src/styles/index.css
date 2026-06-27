@@ -1,0 +1,453 @@
+/* ─────────────────────────────────────────────────────────────
+   StyleHub — index.css
+   Palette inspired by newme.asia: warm ivory + dusty rose +
+   soft terracotta + sage green. Pinterest-style masonry feed.
+───────────────────────────────────────────────────────────── */
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+/* ═══════════════════════════════════════════════
+   BASE
+═══════════════════════════════════════════════ */
+html { scroll-behavior: smooth; }
+
+body {
+  @apply bg-bone text-ink font-body antialiased;
+  background-image:
+    radial-gradient(ellipse 80% 50% at 10% 0%, #F2D4D740 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 90% 100%, #EDE0D450 0%, transparent 60%);
+  background-attachment: fixed;
+}
+
+h1, h2, h3 { @apply font-display; }
+.font-display {
+  font-family: 'Poppins', sans-serif;
+}
+
+
+/* ═══════════════════════════════════════════════
+   NAVBAR
+═══════════════════════════════════════════════ */
+header {
+  background: rgba(253, 248, 243, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(196, 129, 138, 0.15);
+}
+
+
+/* ═══════════════════════════════════════════════
+   HOME HERO — full-width background image
+═══════════════════════════════════════════════ */
+.hero-section {
+  position: relative;
+  min-height: 88vh;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  border-radius: 2rem;
+  margin-bottom: 4rem;
+}
+
+.hero-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url('https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1600&q=85&auto=format&fit=crop');
+  background-size: cover;
+  background-position: center 30%;
+  z-index: 0;
+  border-radius: inherit;
+}
+
+/* warm dusty-rose overlay so text pops */
+.hero-section::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    rgba(253, 248, 243, 0.96) 0%,
+    rgba(242, 212, 215, 0.80) 45%,
+    rgba(242, 212, 215, 0.30) 70%,
+    transparent 100%
+  );
+  z-index: 1;
+  border-radius: inherit;
+}
+
+.hero-section > * { position: relative; z-index: 2; }
+
+
+/* ═══════════════════════════════════════════════
+   BUTTONS
+═══════════════════════════════════════════════ */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  padding: 0.625rem 1.5rem;
+  background: #C97B5A;             /* clay terracotta */
+  color: #fff;
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  border-radius: 9999px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.18s ease, transform 0.12s ease, box-shadow 0.18s ease;
+  box-shadow: 0 4px 14px rgba(201, 123, 90, 0.35);
+}
+.btn-primary:hover  { background: #b8694a; box-shadow: 0 6px 20px rgba(201,123,90,0.4); }
+.btn-primary:active { transform: scale(0.97); }
+
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  padding: 0.625rem 1.5rem;
+  background: transparent;
+  color: #2C2C2C;
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 9999px;
+  border: 1.5px solid rgba(196, 129, 138, 0.5);
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+.btn-outline:hover {
+  background: #FAE8EB;
+  border-color: #C4818A;
+  color: #C4818A;
+}
+.btn-outline:active { transform: scale(0.97); }
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.5rem 1rem;
+  background: transparent;
+  color: #C4818A;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+  border: none;
+}
+.btn-ghost:hover { background: #FAE8EB; color: #b8694a; }
+
+
+/* ═══════════════════════════════════════════════
+   CARDS
+═══════════════════════════════════════════════ */
+.card {
+  background: #fff;
+  border-radius: 1.25rem;
+  border: 1px solid rgba(196, 129, 138, 0.15);
+  overflow: hidden;
+}
+
+/* Pinterest "pin" card — the heart of the feed */
+.pin-card {
+  background: #fff;
+  border-radius: 1.5rem;
+  overflow: hidden;
+  border: 1px solid rgba(196, 129, 138, 0.10);
+  box-shadow:
+    0 1px 3px rgba(0,0,0,0.04),
+    0 4px 12px rgba(196,129,138,0.08);
+  transition: box-shadow 0.25s ease, transform 0.25s ease, border-color 0.25s ease;
+  cursor: pointer;
+}
+.pin-card:hover {
+  box-shadow:
+    0 4px 8px rgba(0,0,0,0.06),
+    0 12px 30px rgba(196,129,138,0.18);
+  transform: translateY(-4px);
+  border-color: rgba(196,129,138,0.25);
+}
+
+
+/* ═══════════════════════════════════════════════
+   MASONRY — true Pinterest-style variable-height grid
+═══════════════════════════════════════════════ */
+.masonry {
+  columns: 2;
+  column-gap: 0.875rem;
+}
+@media (min-width: 540px)  { .masonry { columns: 3; } }
+@media (min-width: 900px)  { .masonry { columns: 4; } }
+@media (min-width: 1200px) { .masonry { columns: 5; } }
+
+.masonry-item {
+  break-inside: avoid;
+  margin-bottom: 0.875rem;
+}
+
+/* Images inside pin-cards should NOT have a fixed aspect ratio
+   — they should show the full image naturally, like Pinterest */
+.pin-card img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+
+/* ═══════════════════════════════════════════════
+   ICON / OVERLAY BUTTONS (heart, save)
+═══════════════════════════════════════════════ */
+.icon-btn {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.14);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.icon-btn:hover  { transform: scale(1.12); box-shadow: 0 4px 14px rgba(0,0,0,0.18); }
+.icon-btn:active { transform: scale(0.94); }
+
+.like-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.15s ease;
+  color: rgba(44,44,44,0.45);
+}
+.like-btn:hover   { color: #D64E6F; }
+.like-btn.is-liked { color: #D64E6F; }
+
+.follow-btn {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.375rem 1rem;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  border: 1.5px solid transparent;
+}
+.follow-btn.is-following {
+  background: #F2D4D7;
+  color: #C4818A;
+  border-color: rgba(196,129,138,0.3);
+}
+.follow-btn:not(.is-following) {
+  background: #C97B5A;
+  color: #fff;
+  border-color: #C97B5A;
+  box-shadow: 0 3px 10px rgba(201,123,90,0.3);
+}
+.follow-btn:not(.is-following):hover { background: #b8694a; }
+.follow-btn.is-following:hover { background: #FAE8EB; }
+
+
+/* ═══════════════════════════════════════════════
+   FORM INPUTS
+═══════════════════════════════════════════════ */
+.input {
+  width: 100%;
+  padding: 0.625rem 1rem;
+  font-family: inherit;
+  font-size: 0.875rem;
+  color: #2C2C2C;
+  background: #fff;
+  border: 1.5px solid rgba(196,129,138,0.25);
+  border-radius: 0.75rem;
+  outline: none;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+.input::placeholder { color: rgba(44,44,44,0.30); }
+.input:focus {
+  border-color: #C4818A;
+  box-shadow: 0 0 0 3px rgba(196,129,138,0.15);
+}
+textarea.input { resize: none; }
+select.input   { cursor: pointer; }
+
+
+/* ═══════════════════════════════════════════════
+   TAGS / PILLS
+═══════════════════════════════════════════════ */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  padding: 0.25rem 0.625rem;
+  border-radius: 9999px;
+  letter-spacing: 0.02em;
+}
+.tag-dark  { background: rgba(44,44,44,0.82); color: #fff; backdrop-filter: blur(6px); }
+.tag-light { background: rgba(255,255,255,0.88); color: #2C2C2C; backdrop-filter: blur(6px); }
+.tag-rose  { background: #FAE8EB; color: #C4818A; }
+.tag-clay  { background: rgba(201,123,90,0.12); color: #b8694a; }
+.tag-sage  { background: rgba(139,175,141,0.15); color: #5a8a5c; }
+
+
+/* ═══════════════════════════════════════════════
+   EYEBROW LABEL
+═══════════════════════════════════════════════ */
+.eyebrow {
+  display: block;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #C4818A;
+}
+
+
+/* ═══════════════════════════════════════════════
+   SECTION DIVIDERS / DECORATIVE
+═══════════════════════════════════════════════ */
+
+/* Soft rose divider line */
+.divider-rose {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(196,129,138,0.3) 30%, rgba(196,129,138,0.3) 70%, transparent);
+  margin: 2.5rem 0;
+}
+
+/* Soft cream section band */
+.section-band {
+  background: linear-gradient(135deg, #FAE8EB 0%, #F5EDE3 50%, #EDE0D4 100%);
+  border-radius: 1.5rem;
+  padding: 3rem 2rem;
+}
+
+
+/* ═══════════════════════════════════════════════
+   STATS / FEATURE STRIPS
+═══════════════════════════════════════════════ */
+.stats-strip {
+  background: linear-gradient(135deg, #C97B5A 0%, #C4818A 50%, #b8699e 100%);
+  border-radius: 1.5rem;
+  color: #fff;
+  padding: 2rem;
+  box-shadow: 0 8px 32px rgba(201,123,90,0.3);
+}
+
+
+/* ═══════════════════════════════════════════════
+   FILTER CHIPS  (pill-style filter bar)
+═══════════════════════════════════════════════ */
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.375rem 0.875rem;
+  border-radius: 9999px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  border: 1.5px solid rgba(196,129,138,0.25);
+  background: #fff;
+  color: #2C2C2C;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+.filter-chip:hover        { border-color: #C4818A; background: #FAE8EB; color: #C4818A; }
+.filter-chip.active       { background: #C97B5A; border-color: #C97B5A; color: #fff; }
+
+
+/* ═══════════════════════════════════════════════
+   PRICE BADGE
+═══════════════════════════════════════════════ */
+.price-badge {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #fff;
+  background: rgba(44,44,44,0.78);
+  backdrop-filter: blur(6px);
+  padding: 0.25rem 0.625rem;
+  border-radius: 0.5rem;
+}
+
+
+/* ═══════════════════════════════════════════════
+   GRADIENT OVERLAYS inside pin cards
+═══════════════════════════════════════════════ */
+.pin-overlay-top {
+  background: linear-gradient(to bottom, rgba(0,0,0,0.28) 0%, transparent 50%);
+}
+.pin-overlay-bottom {
+  background: linear-gradient(to top, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.1) 50%, transparent 100%);
+}
+
+
+/* ═══════════════════════════════════════════════
+   SCROLLBAR
+═══════════════════════════════════════════════ */
+::-webkit-scrollbar          { width: 5px; height: 5px; }
+::-webkit-scrollbar-track    { background: transparent; }
+::-webkit-scrollbar-thumb    { background: rgba(196,129,138,0.3); border-radius: 9999px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(196,129,138,0.55); }
+
+
+/* ═══════════════════════════════════════════════
+   FOCUS VISIBLE
+═══════════════════════════════════════════════ */
+:focus-visible {
+  outline: 2.5px solid #C4818A;
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+
+/* ═══════════════════════════════════════════════
+   LOADER SPINNER
+═══════════════════════════════════════════════ */
+.loader-ring {
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 3px solid rgba(196,129,138,0.2);
+  border-top-color: #C4818A;
+  border-radius: 50%;
+  animation: spin 0.75s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+
+/* ═══════════════════════════════════════════════
+   ANIMATIONS
+═══════════════════════════════════════════════ */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+.fade-up { animation: fadeUp 0.45s ease both; }
+
+@keyframes shimmer {
+  from { background-position: -200% 0; }
+  to   { background-position:  200% 0; }
+}
+.skeleton {
+  background: linear-gradient(90deg, #F2D4D740 25%, #FAE8EB80 50%, #F2D4D740 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s ease infinite;
+  border-radius: 0.75rem;
+}
