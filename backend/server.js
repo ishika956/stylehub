@@ -57,6 +57,7 @@ app.use("/api/notifications", notificationRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/upload", uploadRoutes);
+app.use("/api/ai", require("./routes/aiRoutes"));
 
 app.use(notFound);
 app.use(errorHandler);

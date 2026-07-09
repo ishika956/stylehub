@@ -50,6 +50,24 @@ const OutfitForm = () => {
     }
   };
 
+  const [aiLoading, setAiLoading] = useState(false);
+  const generateDescription = async () => {
+    if (!form.title) return toast.error("Enter an outfit title first");
+    setAiLoading(true);
+    try {
+      const { data } = await api.post("/ai/outfit-description", {
+        title: form.title,
+        productNames: selected.map((p) => p.name || p.product?.name).filter(Boolean),
+        occasion: form.occasion, style: form.style, season: form.season,
+      });
+      setForm((f) => ({ ...f, description: data.description }));
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Could not generate");
+    } finally {
+      setAiLoading(false);
+    }
+  };
+
   // Allow pressing Enter in the search input without submitting the outer form
   const handleSearchKeyDown = (e) => {
     if (e.key === "Enter") {
@@ -192,6 +210,10 @@ const OutfitForm = () => {
             value={form.title}
             onChange={(e) => setForm({ ...form, title: e.target.value })}
           />
+          <button type="button" onClick={generateDescription} disabled={aiLoading}
+            className="text-xs font-medium text-moss hover:underline mb-1">
+            {aiLoading ? "Generating…" : "✨ Generate with AI"}
+          </button>
           <textarea
             rows={3}
             placeholder="Describe this look — the vibe, the occasion, who it's for…"

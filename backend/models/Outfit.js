@@ -6,7 +6,7 @@ const outfitSchema = new mongoose.Schema(
     title: { type: String, required: true, trim: true },
     description: { type: String, default: "" },
     coverImage: { type: String, default: "" }, // stylist-uploaded "look" photo
-
+    aiThumbnail: { type: String, default: "" }, // auto-generated collage
     products: [
       {
         product: { type: mongoose.Schema.Types.ObjectId, ref: "Product", required: true },

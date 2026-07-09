@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const Outfit = require("../models/Outfit");
 const Product = require("../models/Product");
 const Like = require("../models/Like");
+const { generateOutfitThumbnail } = require("../utils/outfitThumbnail");
 
 // Recalculates totalPrice from the linked products
 const computeTotalPrice = async (productEntries) => {
@@ -10,6 +11,14 @@ const computeTotalPrice = async (productEntries) => {
   const products = await Product.find({ _id: { $in: ids } });
   const priceMap = new Map(products.map((p) => [String(p._id), p.discountPrice || p.price]));
   return productEntries.reduce((sum, entry) => sum + (priceMap.get(String(entry.product)) || 0), 0);
+};
+
+// First image URL of each product in the outfit
+const firstImagesForProducts = async (productEntries) => {
+  const ids = productEntries.map((p) => p.product);
+  const docs = await Product.find({ _id: { $in: ids } });
+  const map = new Map(docs.map((d) => [String(d._id), d.images?.[0]]));
+  return productEntries.map((p) => map.get(String(p.product))).filter(Boolean);
 };
 
 // @route GET /api/outfits
@@ -111,6 +120,18 @@ const createOutfit = asyncHandler(async (req, res) => {
     totalPrice,
   });
 
+  try {
+    const imageUrls = await firstImagesForProducts(products);
+    const thumb = await generateOutfitThumbnail(imageUrls, title);
+    if (thumb) {
+      outfit.aiThumbnail = thumb;
+      if (!outfit.coverImage) outfit.coverImage = thumb;
+      await outfit.save();
+    }
+  } catch (e) {
+    console.error("[outfit thumbnail]", e.message);
+  }
+
   res.status(201).json({ success: true, outfit });
 });
 
@@ -145,6 +166,19 @@ const updateOutfit = asyncHandler(async (req, res) => {
 
   if (req.body.products) {
     outfit.totalPrice = await computeTotalPrice(req.body.products);
+  }
+  
+  if (req.body.products) {
+    try {
+      const imageUrls = await firstImagesForProducts(req.body.products);
+      const thumb = await generateOutfitThumbnail(imageUrls, outfit.title);
+      if (thumb) {
+        outfit.aiThumbnail = thumb;
+        if (!outfit.coverImage) outfit.coverImage = thumb;
+      }
+    } catch (e) {
+      console.error("[outfit thumbnail]", e.message);
+    }
   }
 
   await outfit.save();

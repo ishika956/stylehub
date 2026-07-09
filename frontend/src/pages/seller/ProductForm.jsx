@@ -84,6 +84,21 @@ const ProductForm = () => {
       toast.error(err.response?.data?.message || "Save failed");
     } finally { setLoading(false); }
   };
+  const [aiLoading, setAiLoading] = useState(false);
+  const generateDescription = async () => {
+    if (!form.name) return toast.error("Enter a product name first");
+    setAiLoading(true);
+    try {
+      const { data } = await api.post("/ai/product-description", {
+        name: form.name, category: form.category, brand: form.brand, color: form.color,
+      });
+      setForm((f) => ({ ...f, description: data.description }));
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Could not generate");
+    } finally {
+      setAiLoading(false);
+    }
+  };
 
   const field = (key, placeholder, type = "text", req = false, extra = {}) => (
     <input
@@ -181,7 +196,12 @@ const ProductForm = () => {
         </div>
 
         {/* Basic info */}
+        {/* Basic info */}
         {field("name", "Product name", "text", true)}
+        <button type="button" onClick={generateDescription} disabled={aiLoading}
+          className="text-xs font-medium text-moss hover:underline mb-1 self-start">
+          {aiLoading ? "Generating…" : "✨ Generate with AI"}
+        </button>
         <textarea
           rows={3}
           placeholder="Description — fabric, fit, features…"
