@@ -57,7 +57,14 @@ function App() {
           <Route path="/outfits/:id" element={<OutfitDetails />} />
           <Route path="/stylists/:id" element={<StylistProfile />} />
 
-          <Route path="/cart" element={<Cart />} />
+          <Route
+            path="/cart"
+            element={
+              <ProtectedRoute>
+                <Cart />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="/checkout"
             element={

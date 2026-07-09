@@ -5,7 +5,7 @@ import { useCart } from "../context/CartContext";
 
 const Navbar = () => {
   const { user, logout } = useAuth();
-  const { items } = useCart();
+  const { items, clearCart } = useCart();
   const [open, setOpen]       = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const navigate              = useNavigate();
@@ -28,8 +28,7 @@ const Navbar = () => {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  const handleLogout = async () => { await logout(); navigate("/"); };
-
+  const handleLogout = async () => { clearCart(); await logout(); navigate("/"); };
   const navLink = (to, label) => (
     <Link
       to={to}
@@ -65,6 +64,7 @@ const Navbar = () => {
         {/* Right side */}
         <div className="flex items-center gap-2">
           {/* Cart */}
+          {user && (
           <Link to="/cart" className="relative icon-btn shadow-none hover:bg-sand">
             <svg className="w-5 h-5 text-ink/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8}
@@ -76,6 +76,7 @@ const Navbar = () => {
               </span>
             )}
           </Link>
+          )}
 
           {/* User menu */}
           {user ? (
