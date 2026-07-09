@@ -12,6 +12,16 @@ const REFRESH_COOKIE_OPTIONS = {
   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
 };
 
+// Password policy: min 8 chars + lowercase + uppercase + number + special char
+const validatePassword = (password) => {
+  if (!password || password.length < 8) return "Password must be at least 8 characters long";
+  if (!/[a-z]/.test(password)) return "Password must include a lowercase letter";
+  if (!/[A-Z]/.test(password)) return "Password must include an uppercase letter";
+  if (!/[0-9]/.test(password)) return "Password must include a number";
+  if (!/[^A-Za-z0-9]/.test(password)) return "Password must include a special character";
+  return null;
+};
+
 const issueTokensAndRespond = async (user, res, statusCode = 200) => {
   const accessToken = generateAccessToken(user._id);
   const refreshToken = generateRefreshToken(user._id);
@@ -35,6 +45,11 @@ const register = asyncHandler(async (req, res) => {
   if (!name || !email || !password) {
     res.status(400);
     throw new Error("Name, email and password are required");
+  }
+  const pwError = validatePassword(password);
+  if (pwError) {
+    res.status(400);
+    throw new Error(pwError);
   }
 
   const existing = await User.findOne({ email });
@@ -167,9 +182,10 @@ const verifyResetOtp = asyncHandler(async (req, res) => {
 // @route POST /api/auth/reset-password  { email, otp, password }
 const resetPassword = asyncHandler(async (req, res) => {
   const { email, otp, password } = req.body;
-  if (!password || password.length < 6) {
+  const pwError = validatePassword(password);
+  if (pwError) {
     res.status(400);
-    throw new Error("Password must be at least 6 characters");
+    throw new Error(pwError);
   }
 
   const user = await findUserByOtp(email, otp);

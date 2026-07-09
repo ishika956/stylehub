@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useAuth } from "../context/AuthContext";
+import { validatePassword } from "../utils/validatePassword";
+import PasswordChecklist from "../components/PasswordChecklist";
 
 const Register = () => {
   const { register } = useAuth();
@@ -13,6 +15,9 @@ const Register = () => {
     e.preventDefault();
     setLoading(true);
     try {
+      if (!validatePassword(form.password)) {
+        return toast.error("Password doesn't meet the requirements");
+      }
       await register(form);
       toast.success("Account created!");
       navigate("/");
@@ -53,11 +58,12 @@ const Register = () => {
           <input
             type="password"
             required
-            minLength={6}
+            minLength={8}
             className="input mt-1"
             value={form.password}
             onChange={(e) => setForm({ ...form, password: e.target.value })}
           />
+          <PasswordChecklist password={form.password} />
         </div>
         <div>
           <label className="text-sm font-medium">I want to join as</label>

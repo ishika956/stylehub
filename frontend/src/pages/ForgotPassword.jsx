@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import api from "../api/axios";
+import { validatePassword } from "../utils/validatePassword";
+import PasswordChecklist from "../components/PasswordChecklist";
 
 const ForgotPassword = () => {
   const navigate = useNavigate();
@@ -29,6 +31,9 @@ const ForgotPassword = () => {
   const submitReset = async (e) => {
     e.preventDefault();
     if (password !== confirm) return toast.error("Passwords do not match");
+    if (!validatePassword(password)) {
+      return toast.error("Password doesn't meet the requirements");
+    }
     setLoading(true);
     try {
       await api.post("/auth/reset-password", { email, otp, password });
@@ -85,6 +90,7 @@ const ForgotPassword = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
+          <PasswordChecklist password={password} />
           <input
             type="password"
             required
