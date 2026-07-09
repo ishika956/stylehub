@@ -122,39 +122,63 @@ const forgotPassword = asyncHandler(async (req, res) => {
   const user = await User.findOne({ email: req.body.email });
   // Always respond success-shaped to avoid leaking which emails exist
   if (!user) {
-    return res.json({ success: true, message: "If that email exists, a reset link was sent" });
+    return res.json({ success: true, message: "If that email exists, a code was sent" });
   }
 
-  const resetToken = crypto.randomBytes(32).toString("hex");
-  user.resetPasswordToken = crypto.createHash("sha256").update(resetToken).digest("hex");
-  user.resetPasswordExpire = Date.now() + 30 * 60 * 1000; // 30 min
+  const otp = String(crypto.randomInt(100000, 1000000)); // 6-digit code
+  user.resetPasswordToken = crypto.createHash("sha256").update(otp).digest("hex");
+  user.resetPasswordExpire = Date.now() + 10 * 60 * 1000; // 10 min
   await user.save();
 
-  const resetUrl = `${process.env.CLIENT_URL}/reset-password/${resetToken}`;
+  // Visible in the backend console even when SMTP isn't configured
+  console.log(`[password reset OTP] ${user.email} -> ${otp}`);
+
   await sendEmail({
     to: user.email,
-    subject: "StyleHub password reset",
-    html: `<p>Click <a href="${resetUrl}">here</a> to reset your password. This link expires in 30 minutes.</p>`,
+    subject: "Your StyleHub password reset code",
+    html: `<p>Hi ${user.name}, your password reset code is <b style="font-size:20px;letter-spacing:3px">${otp}</b>. It expires in 10 minutes.</p>`,
   });
 
-  res.json({ success: true, message: "If that email exists, a reset link was sent" });
+  res.json({ success: true, message: "If that email exists, a code was sent" });
 });
 
-// @route POST /api/auth/reset-password/:token
-const resetPassword = asyncHandler(async (req, res) => {
-  const hashedToken = crypto.createHash("sha256").update(req.params.token).digest("hex");
-
-  const user = await User.findOne({
-    resetPasswordToken: hashedToken,
+// Finds a user whose stored OTP hash + expiry still match
+const findUserByOtp = async (email, otp) => {
+  if (!email || !otp) return null;
+  const hashed = crypto.createHash("sha256").update(String(otp)).digest("hex");
+  return User.findOne({
+    email,
+    resetPasswordToken: hashed,
     resetPasswordExpire: { $gt: Date.now() },
   }).select("+resetPasswordToken +resetPasswordExpire");
+};
 
+// @route POST /api/auth/verify-otp  { email, otp }
+// Lets the frontend confirm the code before showing the new-password step
+const verifyResetOtp = asyncHandler(async (req, res) => {
+  const user = await findUserByOtp(req.body.email, req.body.otp);
   if (!user) {
     res.status(400);
-    throw new Error("Reset token is invalid or has expired");
+    throw new Error("Code is invalid or has expired");
+  }
+  res.json({ success: true, message: "Code verified" });
+});
+
+// @route POST /api/auth/reset-password  { email, otp, password }
+const resetPassword = asyncHandler(async (req, res) => {
+  const { email, otp, password } = req.body;
+  if (!password || password.length < 6) {
+    res.status(400);
+    throw new Error("Password must be at least 6 characters");
   }
 
-  user.password = req.body.password;
+  const user = await findUserByOtp(email, otp);
+  if (!user) {
+    res.status(400);
+    throw new Error("Code is invalid or has expired");
+  }
+
+  user.password = password;
   user.resetPasswordToken = undefined;
   user.resetPasswordExpire = undefined;
   await user.save();
@@ -192,6 +216,7 @@ module.exports = {
   refresh,
   logout,
   forgotPassword,
+  verifyResetOtp,   // <-- add this line
   resetPassword,
   verifyEmail,
   getMe,
